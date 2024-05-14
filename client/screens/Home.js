@@ -1,7 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const Home = () => {
+
+  // useEffect(async () => {
+  //   const token = await AsyncStorage.getItem('token');
+
+  //   console.log(token)
+  // },[])
   return (
     <View style = {styles.container}>
       <Text style = {styles.headingStyle}>React Navigation</Text>

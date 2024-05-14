@@ -1,15 +1,39 @@
-import { View, Text } from "react-native";
-import React from "react";
+import { View, Text, Alert } from "react-native";
+import React, {useState} from "react";
 import Background from "../../resources/Background";
 import Field from "./Field";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ScrollView } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import axios from 'axios'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({props}) => {
 
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
   const navigation = useNavigation()
+
+  function handleSubmit(){
+    
+    const userData = {
+       email, password
+    }
+      axios.post("http://192.168.211.231:8080/api/v1/auth/login", userData)
+      .then(res => {console.log(res.data)
+        if(res.data.status == 'ok'){
+          Alert.alert('Login Successfull')
+          AsyncStorage.setItem('token', res.data.data)
+          AsyncStorage.setItem("isLoggedIn", JSON.stringify(true))
+          navigation.navigate("Profile")
+        }else {
+          Alert.alert(JSON.stringify(res.data))
+        }
+      })
+      .catch(e => console.log(e))
+  }
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
     <View style={{ backgroundColor: "#eb6434" }}>
@@ -65,8 +89,10 @@ const Login = ({props}) => {
               style={{ marginRight: 10, fontSize: 24 }}
             />
             <Field
-              placeholder="Email or Username"
+              placeholder="Your Email"
               keyboardType={"email-address"}
+              value={email}
+              onChange = {e => setEmail(e.nativeEvent.text)}
             />
           </View>
           <View
@@ -86,7 +112,10 @@ const Login = ({props}) => {
               color={"#345ea3"}
               style={{ marginRight: 10, fontSize: 24 }}
             />
-          <Field placeholder="Password" secureTextEntry={true} />
+          <Field placeholder="Your Password" secureTextEntry={true} 
+            value={password}
+            onChange = {e => setPassword(e.nativeEvent.text)}
+          />
           </View>
           <View style={{ alignItems: "center", width: "78%" }}>
             <Text
@@ -105,6 +134,7 @@ const Login = ({props}) => {
               marginTop: 50,
               marginBottom: 40,
             }}
+            onPress={() => handleSubmit()}
           >
             <Text style={{ color: "white", fontSize: 25, fontWeight: "bold" }}>
               Login

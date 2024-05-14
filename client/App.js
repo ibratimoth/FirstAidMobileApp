@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { NavigationContainer, useNavigation, DrawerActions  } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Home from "./screens/Home";
 import ProfileScreen from "./screens/ProfileScreen";
 import DrawerStack from "./screens/DrawerStack";
@@ -14,6 +14,7 @@ import UserScreen from "./screens/UserScreen";
 import SplashScreenView from "./SplashScreenView";
 import Login from "./screens/auth/Login";
 import Register from "./screens/auth/Register";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StackNav = () => {
   const Stack = createNativeStackNavigator();
@@ -31,6 +32,10 @@ const StackNav = () => {
         
       }}
     >
+      
+       {/* <Stack.Screen name="Login" component={Login} options={{
+        headerShown: false
+      }}/>*/}
       <Stack.Screen name="Home" component={Home} options={{
         headerLeft: () => {
           return(
@@ -46,12 +51,9 @@ const StackNav = () => {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="User" component={UserScreen} />
       <Stack.Screen name="Splash" component={SplashScreenView} />
-      <Stack.Screen name="Login" component={Login} options={{
+      {/* <Stack.Screen name="Register" component={Register} options={{
         headerShown: false
-      }}/>
-      <Stack.Screen name="Register" component={Register} options={{
-        headerShown: false
-      }}/>
+      }}/> */}
     </Stack.Navigator>
   );
 };
@@ -64,15 +66,48 @@ const DrawerNav = () => {
     screenOptions={{
       headerShown : false
     }}>
-        <Drawer.Screen name="Homes" component={StackNav} />
+        <Drawer.Screen name="Home" component={StackNav} />
       </Drawer.Navigator>
   )
 }
+
+// const LoginNav = () => {
+//   const Stack = createNativeStackNavigator();
+
+//   <Stack.Navigator
+//     screenOptions={{
+//       headerShown: false
+//     }}
+//   >
+//     <Stack.Screen name="Login" component={Login} />
+//     <Stack.Screen name="Register" component={Register}/>
+//     <Stack.Screen name="Home" component={DrawerNav}/>
+//   </Stack.Navigator>
+// }
 const App = () => {
  
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  async function getData(){
+    const data = await AsyncStorage.getItem("isLoggedIn")
+    console.log(data, 'at App.js');
+    setIsLoggedIn(data)
+  }
+
+  const Stack = createNativeStackNavigator();
+  useEffect(() => {
+    getData()
+  }, [])
   return (
     <NavigationContainer>
-      <DrawerNav/>
+      <Stack.Navigator
+    screenOptions={{
+      headerShown: false
+    }}
+  >
+    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="Register" component={Register}/>
+    {/* <Stack.Screen name="Home" component={DrawerNav}/> */}
+  </Stack.Navigator>
     </NavigationContainer>
   );
 };
