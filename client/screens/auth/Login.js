@@ -2,8 +2,7 @@ import { View, Text, Alert } from "react-native";
 import React, {useState} from "react";
 import Background from "../../resources/Background";
 import Field from "./Field";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { ScrollView } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios'
@@ -27,7 +26,7 @@ const Login = ({props}) => {
           Alert.alert('Login Successfull')
           AsyncStorage.setItem('token', res.data.data)
           AsyncStorage.setItem("isLoggedIn", JSON.stringify(true))
-          navigation.navigate("Profile")
+          navigation.navigate("Home")
         }else {
           Alert.alert(JSON.stringify(res.data))
         }
